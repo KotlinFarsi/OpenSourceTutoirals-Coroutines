@@ -1,2 +1,0 @@
-# OpenSourceTutoirals-Coroutines
-Kotlin Coroutines
