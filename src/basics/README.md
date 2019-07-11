@@ -13,6 +13,15 @@
 
 * [ایجاد ارتباط بین کروتین بلاک کننده و غیربلاک کننده](#%D8%A7%DB%8C%D8%AC%D8%A7%D8%AF-%D8%A7%D8%B1%D8%AA%D8%A8%D8%A7%D8%B7-%D8%A8%DB%8C%D9%86-%DA%A9%D8%B1%D9%88%D8%AA%DB%8C%D9%86-%D8%A8%D9%84%D8%A7%DA%A9-%DA%A9%D9%86%D9%86%D8%AF%D9%87-%D9%88-%D8%BA%DB%8C%D8%B1%D8%A8%D9%84%D8%A7%DA%A9-%DA%A9%D9%86%D9%86%D8%AF%D9%87)
 
+* [منتظر ماندن برای تمام شدن یک Job](#%D9%85%D9%86%D8%AA%D8%B8%D8%B1%20%D9%85%D8%A7%D9%86%D8%AF%D9%86%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%AA%D9%85%D8%A7%D9%85%20%D8%B4%D8%AF%D9%86%20%DB%8C%DA%A9%20Job)
+
+*  [برنامه نویسی همزمان به شکل ساختار یافته](#%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%86%D9%88%DB%8C%D8%B3%DB%8C%20%D9%87%D9%85%D8%B2%D9%85%D8%A7%D9%86%20%D8%A8%D9%87%20%D8%B4%DA%A9%D9%84%20%D8%B3%D8%A7%D8%AE%D8%AA%D8%A7%D8%B1%20%DB%8C%D8%A7%D9%81%D8%AA%D9%87)
+
+*  [سازنده اسکوپ](#%D8%B3%D8%A7%D8%B2%D9%86%D8%AF%D9%87%20%D8%A7%D8%B3%DA%A9%D9%88%D9%BE)
+
+  
+
+* 
 
 
 #### اولین کروتین را اجرا کنید
@@ -110,3 +119,94 @@ class MyTest {
     }
 }
 ```
+<div dir="rtl">
+
+#### منتظر ماندن برای تمام شدن یک Job
+
+کروتین امکانی را می‌دهد تا بدون این که تاخیری در برنامه ایجاد کنیم, متنظر بمانیم تا اجرای آن کروتین به اتمام برسد.
+
+در این روش به طور صریح و بدون بلاک شدن به کروتین از طریق متد `join` اعلان میکنیم که تا تمام شدن این کروتین منتظر بماند.
+
+</div>
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+//sampleStart
+    val job = GlobalScope.launch { // launch a new coroutine and keep a reference to its Job
+        delay(1000L)
+        println("World!")
+    }
+    println("Hello,")
+    job.join() // wait until child coroutine completes
+//sampleEnd    
+}
+```
+
+<div dir="rtl">
+در کد بالا کروتین اصلی به هیچ وجه به تسکی که در بک‌گراند اجرا می‌شود کاری ندارد.
+
+
+#### برنامه نویسی همزمان به شکل ساختار یافته
+
+برای استفاده از کروتین مواردی هست که می‌بایست درنظر گرفته شود:
+زمانی که از سازنده کروتین `GlobalScope.launch` استفاده می‌کنیم یعنی یک کروتین سطح بالا را ایجاد کرده‌ایم, انجام چنین کاری درحالی که سبک وزن است و مادامی که رفرنس این کروتین وجود داشته باشد حافظه مصرف می‌شود و اگر رفرنس این کروتین فراموش شود, این کروتین درحال اجرا خواهد ماند. اگر یک کروتین با یک تاخیر طولانی هنگ کند, دراین حالت اگر کروتین های زیادی اجر شوند و همچنین از متد [join](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/join.html) آنها استفاده شود, باعث ایجاد خطا در برنامه می‌شود.
+
+راه حل بهتر اسفاده از برنامه نویسی همزمان به شکل ساختار یافته است, به این شکل که, به چای استفاده از [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html) , ازاسکوپ های مختص به هر کار استفاده کنیم به عبارت دیگر بازه عملکرد کروتین را محدود به یک بخش کوچک‌تری از اپلیکیشن کنیم.
+
+در مثال بالا یک کروتین `runBlocking` کل فانکشن `main` را شامل می‌شود. که این کروتین یک نمونه از `GlobalScope` را در بلاک خود دارد, در این بلاک ما می‌توانیم کروتین هایی اجرا کنیم که نیاز به استفاده از متد `join `را ندارند, به این خاطر که تا زمانی که کروتین های داخلی کروتین (`runBlocking`) تمام نشو‌‌ند این کروتین درحال اجرا خواهد ماند. 
+
+در این حالت مثال بالا به شکل بهتری قابل پیاده سازی است:
+</div>
+
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking { // this: CoroutineScope
+    launch { // launch a new coroutine in the scope of runBlocking
+        delay(1000L)
+        println("World!")
+    }
+    println("Hello,")
+}
+```
+<div dir="rtl">
+
+#### سازنده اسکوپ
+
+علاوه بر این که اسکوپ ها از طریق سازنده‌های کروتین قابل استفاده هستند,یک سازنده [coroutineScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-scope/index.html) هم وجود دارد که وظیفه آن به طور اختصاصی ایجاد اسکوپ است که در موارد داخلی قابل استفاده است.مشابه همانطور که در بالا اشاره شد تا زمانی که کروتین های داخلی آن اسکوپ تمام نشوند این کروتین اسکوپ درحال اجرا خواهد ماند. تفاوت اصلی `runBlocking`  و  `coroutineScope` این است که `coroutineScope` تا زمانی که همه کروتین های داخلی تمان نشده‌اند, باعث بلاک شدن ترد جاری نمی‌شود.
+
+</div>
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking { // this: CoroutineScope
+    launch { 
+        delay(200L)
+        println("Task from runBlocking")
+    }
+    
+    coroutineScope { // Creates a coroutine scope
+        launch {
+            delay(500L) 
+            println("Task from nested launch")
+        }
+    
+        delay(100L)
+        println("Task from coroutine scope") // This line will be printed before the nested launch
+    }
+    
+    println("Coroutine scope is over") // This line is not printed until the nested launch completes
+}
+```
+
+<div dir="rtl">
+
+
+</div>
+
+
+
