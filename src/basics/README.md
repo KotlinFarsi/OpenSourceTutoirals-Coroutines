@@ -15,13 +15,17 @@
 
 * [منتظر ماندن برای تمام شدن یک Job](#%D9%85%D9%86%D8%AA%D8%B8%D8%B1%20%D9%85%D8%A7%D9%86%D8%AF%D9%86%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%AA%D9%85%D8%A7%D9%85%20%D8%B4%D8%AF%D9%86%20%DB%8C%DA%A9%20Job)
 
-*  [برنامه نویسی همزمان به شکل ساختار یافته](#%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%86%D9%88%DB%8C%D8%B3%DB%8C%20%D9%87%D9%85%D8%B2%D9%85%D8%A7%D9%86%20%D8%A8%D9%87%20%D8%B4%DA%A9%D9%84%20%D8%B3%D8%A7%D8%AE%D8%AA%D8%A7%D8%B1%20%DB%8C%D8%A7%D9%81%D8%AA%D9%87)
+* [برنامه نویسی همزمان به شکل ساختار یافته](#%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%86%D9%88%DB%8C%D8%B3%DB%8C%20%D9%87%D9%85%D8%B2%D9%85%D8%A7%D9%86%20%D8%A8%D9%87%20%D8%B4%DA%A9%D9%84%20%D8%B3%D8%A7%D8%AE%D8%AA%D8%A7%D8%B1%20%DB%8C%D8%A7%D9%81%D8%AA%D9%87)
 
-*  [سازنده اسکوپ](#%D8%B3%D8%A7%D8%B2%D9%86%D8%AF%D9%87%20%D8%A7%D8%B3%DA%A9%D9%88%D9%BE)
+* [سازنده اسکوپ](#%D8%B3%D8%A7%D8%B2%D9%86%D8%AF%D9%87%20%D8%A7%D8%B3%DA%A9%D9%88%D9%BE)
 
-  
+* [ریفکتور کردن به suspend فانکشن](#%D8%B1%DB%8C%D9%81%DA%A9%D8%AA%D9%88%D8%B1%20%DA%A9%D8%B1%D8%AF%D9%86%20%D8%A8%D9%87%20suspend%20%D9%81%D8%A7%D9%86%DA%A9%D8%B4%D9%86)
 
-* 
+*  [کروتین‌ها سبک وزن هستند](#%DA%A9%D8%B1%D9%88%D8%AA%DB%8C%D9%86%E2%80%8C%D9%87%D8%A7%20%D8%B3%D8%A8%DA%A9%20%D9%88%D8%B2%D9%86%20%D9%87%D8%B3%D8%AA%D9%86%D8%AF)
+
+* [کروتین‌های سراسری شبیه به تردهای شبح هستند](#%DA%A9%D8%B1%D9%88%D8%AA%DB%8C%D9%86%E2%80%8C%D9%87%D8%A7%DB%8C%20%D8%B3%D8%B1%D8%A7%D8%B3%D8%B1%DB%8C%20%D8%B4%D8%A8%DB%8C%D9%87%20%D8%A8%D9%87%20%D8%AA%D8%B1%D8%AF%D9%87%D8%A7%DB%8C%20%D8%B4%D8%A8%D8%AD%20%D9%87%D8%B3%D8%AA%D9%86%D8%AF)
+
+
 
 
 #### اولین کروتین را اجرا کنید
@@ -140,7 +144,7 @@ fun main() = runBlocking {
     }
     println("Hello,")
     job.join() // wait until child coroutine completes
-//sampleEnd    
+//sampleEnd
 }
 ```
 
@@ -155,7 +159,7 @@ fun main() = runBlocking {
 
 راه حل بهتر اسفاده از برنامه نویسی همزمان به شکل ساختار یافته است, به این شکل که, به چای استفاده از [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html) , ازاسکوپ های مختص به هر کار استفاده کنیم به عبارت دیگر بازه عملکرد کروتین را محدود به یک بخش کوچک‌تری از اپلیکیشن کنیم.
 
-در مثال بالا یک کروتین `runBlocking` کل فانکشن `main` را شامل می‌شود. که این کروتین یک نمونه از `GlobalScope` را در بلاک خود دارد, در این بلاک ما می‌توانیم کروتین هایی اجرا کنیم که نیاز به استفاده از متد `join `را ندارند, به این خاطر که تا زمانی که کروتین های داخلی کروتین (`runBlocking`) تمام نشو‌‌ند این کروتین درحال اجرا خواهد ماند. 
+در مثال بالا یک کروتین `runBlocking` کل فانکشن `main` را شامل می‌شود. که این کروتین یک نمونه از `GlobalScope` را در بلاک خود دارد, در این بلاک ما می‌توانیم کروتین هایی اجرا کنیم که نیاز به استفاده از متد `join `را ندارند, به این خاطر که تا زمانی که کروتین های داخلی کروتین (`runBlocking`) تمام نشو‌‌ند این کروتین درحال اجرا خواهد ماند.
 
 در این حالت مثال بالا به شکل بهتری قابل پیاده سازی است:
 </div>
@@ -184,33 +188,101 @@ fun main() = runBlocking { // this: CoroutineScope
 import kotlinx.coroutines.*
 
 fun main() = runBlocking { // this: CoroutineScope
-    launch { 
+    launch {
         delay(200L)
         println("Task from runBlocking")
     }
-    
+
     coroutineScope { // Creates a coroutine scope
         launch {
-            delay(500L) 
+            delay(500L)
             println("Task from nested launch")
         }
-    
+
         delay(100L)
         println("Task from coroutine scope") // This line will be printed before the nested launch
     }
-    
+
     println("Coroutine scope is over") // This line is not printed until the nested launch completes
 }
 ```
 
 <div dir="rtl">
-#### فانکشن‌ های suspend
 
-در مثال قبل, برای ریفکتر کردن کد میتوانیم قسمتی از کد را داخل یک فانکشن قرار دهیم, بدلیل این که این متد در سازنده کروتین قابل میبایست برای فانکشن کلیدواژه suspend را قرار دهیم
-
-
+#### ریفکتور کردن به suspend فانکشن‌
+در مثال قبل, برای ریفکتور کردن کد میتوانیم بلاک `launch` را داخل یک فانکشن قرار دهیم و بخاطر این که این متد در سازنده کروتین قابل استفاده باشد, میبایست برای فانکشن کلیدواژه `suspend` را قرار دهیم, قابلیت دیگر `suspend` فانکشن این است که میتواند در یک `suspend` فانکشن دیگر قابل استفاده باشد. مثل فانکشن delay که در مثال زیر آورده شده است.
 
 </div>
 
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    launch { doWorld() }
+    println("Hello,")
+}
+
+// this is your first suspending function
+suspend fun doWorld() {
+    delay(1000L)
+    println("World!")
+}
+```
+
+<div dir="rtl">
 
 
+اما اگر فانکشن ریفکتور شده دارای یک `CoroutineScope`  باشد و داخل یک اسکوپ دیگر صدا زده شود چه می‌شود؟
+
+یکی از راه‌حل ها تبدیل این فانکشن به یک اکسنشن فانکشن روی `CoroutineScope` است اما این روش شاید زیاد کاربردی نباشد. راه حل بهتر میتواند داشتن یک پارامتر `CoroutineScope` در داخل یک کلاس به طور مشخص باشد یا این که میتواند به صورت ضمنی باشد (وقتی که کلاس بیرونی `CoroutineScope` را پیداه سازی کرد).
+
+آخرین روش [CoroutineScope(coroutineContext)](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-scope.html) می‌تواند استفاده شود که این هم به لحاظ ساختاری, ناامن است, به این دلیل شما کنترلی بر اسکوپ اجرایی این متد ندارید.
+
+
+
+#### کروتین‌ها سبک وزن هستند
+
+کد زیر را اجرا کنید:
+
+</div>
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    repeat(100_000) { // launch a lot of coroutines
+        launch {
+            delay(1000L)
+            print(".")
+        }
+    }
+}
+```
+
+<div dir="rtl">
+این کد صدهزار کروتین را اجرا می‌کند که هر کروتین یک نقطه را چاپ می‌کند. اگر این کار را با ترد‌ها انجام دهیم به احتمال زیاد خطای کمبود حافظه اتفاق می‌افتد.
+
+
+
+#### کروتین‌های سراسری شبیه به تردهای شبح هستند
+
+کد زیر یک کروتین طولانی مدت را در [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html) اجرا می‌کند که عبارت "I'm sleeping" را هر ثانیه دوبار چاپ می‌کند و بعد از یک تاخیر به فانکشن اصلی بازمیگردد.
+</div>
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+//sampleStart
+    GlobalScope.launch {
+        repeat(1000) { i ->
+            println("I'm sleeping $i ...")
+            delay(500L)
+        }
+    }
+    delay(1300L) // just quit after delay
+//sampleEnd
+}
+```
+<div dir="rtl">
+</div>
