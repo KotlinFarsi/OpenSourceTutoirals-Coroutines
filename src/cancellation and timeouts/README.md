@@ -1,5 +1,4 @@
 <div dir="rtl">
-
 ## لغوکردن و پایان زمان اجرا
 
 
@@ -35,7 +34,7 @@ fun main() = runBlocking {
     delay(1300L) // delay a bit
     println("main: I'm tired of waiting!")
     job.cancel() // cancels the job
-    job.join() // waits for job's completion
+    job.join() // waits for job's completion 
     println("main: Now I can quit.")
 //sampleEnd    
 }
@@ -62,4 +61,3 @@ main: Now I can quit.
 
 </div>
 
-</div>
