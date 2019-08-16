@@ -1,8 +1,10 @@
 # OpenSourceTutorials-coroutines
 
-This tutorial provided based on the [Documents](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/coroutines-guide.md)
+To see tutorials go to the [src](./src) folder
 
 Full course and another kotlin tutorials are accessible for free in KotlinFarsi.com website
+
+This tutorial provided based on the [Documents](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/coroutines-guide.md)
 
 ## How to contribute on OpenSourceTutorials
 
