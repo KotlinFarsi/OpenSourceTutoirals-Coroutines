@@ -1,4 +1,5 @@
 <div dir="rtl">
+    
 ## لغوکردن و پایان زمان اجرا
 
 
@@ -41,7 +42,9 @@ fun main() = runBlocking {
 ```
 
 <div dir="rtl">
+    
 خروجی کد به شکل زیر خواهد بود:
+
 </div>
 
 ```
@@ -53,10 +56,9 @@ main: Now I can quit.
 ```
 
 <div dir="rtl">
+    
+    
 برای لغو کردن کروتین متد  [cancelAndJoin](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/cancel-and-join.html) هم وجود دارد که ترکیبی از  [cancel](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/cancel.html) و [join](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/join.html) است.
-
-
-
 
 
 </div>
